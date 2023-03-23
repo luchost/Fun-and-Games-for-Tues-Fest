@@ -180,7 +180,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 10
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
@@ -202,8 +202,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Rigidbody2D: {fileID: 223876335}
-  Speed: 10
-  JumpForce: 1
+  Speed: 30
+  JumpForce: 5
+  JumpSpeedLimit: 30
 --- !u!95 &223876337
 Animator:
   serializedVersion: 3
@@ -598,7 +599,7 @@ GameObject:
   - component: {fileID: 1492169512}
   m_Layer: 0
   m_Name: Terrain
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

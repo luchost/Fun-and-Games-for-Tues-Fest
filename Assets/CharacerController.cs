@@ -6,7 +6,9 @@ public class CharacerController : MonoBehaviour
 {
     public Rigidbody2D Rigidbody2D;
     public  float Speed;
-    public float JumpForce ;
+    public float JumpForce;
+    public float JumpSpeedLimit;
+    private bool isGrounded;
 
     // Start is called before the first frame update
     void Start()
@@ -19,11 +21,29 @@ public class CharacerController : MonoBehaviour
     {
       
         float CurrSpeed = Speed * Input.GetAxis("Horizontal");
-        Rigidbody2D.velocity = new Vector2(CurrSpeed , 0);
+
+        Vector2 forward = new Vector2(CurrSpeed, 0);
+        Rigidbody2D.velocity = forward;
         
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") == true && isGrounded == true)
         {
-            Rigidbody2D.velocity = new Vector2(CurrSpeed, JumpForce);
+            Vector2 up = new Vector2(0, 10);
+            Rigidbody2D.AddForce(up) ;
+        }
+    }
+
+    void OnCollisionStay2D(Collision2D col)
+    {
+        if (col.gameObject.tag == "Ground")
+        {
+            isGrounded = true;
+        }
+    }
+    void OnCollisionExit2D(Collision2D col)
+    {
+        if (col.gameObject.tag == "Ground")
+        {
+            isGrounded = false;
         }
     }
 }
