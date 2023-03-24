@@ -12,6 +12,7 @@ public class CharacerController : MonoBehaviour
     public Animator Animator;
     public GameObject Player1;
     public GameObject Player2;
+    private bool AnimationIsRunning = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -52,14 +53,21 @@ public class CharacerController : MonoBehaviour
             else
             {
                 Animator.SetBool("Block", false);
+                Animator.SetBool("StopBlock", true);
             }
 
         }
 
         //Animations Start Here
-        if (Input.GetButtonDown("Fire1") == true)
+       /* Animation anim = Animator.GetCurrentAnimatorClipInfo(0)[0].clip;
+        if (!anim.IsPlaying("Attack1") || !anim.IsPlaying("Attack2") || !anim.IsPlaying("Attack2"))
+        {
+            AnimationIsRunning = false;
+        }*/
+        if (Input.GetButtonDown("Fire1") == true && AnimationIsRunning == false)
         {
             Animator.SetBool("Attack1", true);
+            //AnimationIsRunning = true;
         
         }
         if (Input.GetButtonDown("Fire2") == true)
@@ -72,15 +80,15 @@ public class CharacerController : MonoBehaviour
             Animator.SetBool("Attack3", true);
 
         }
-        if(Input.GetButtonDown("Horizontal") == true && isGrounded == true)
+        if (Input.GetButtonDown("Horizontal") == true && isGrounded == true)
         {
             Animator.SetBool("Grounded", true);
             Animator.SetInteger("AnimState", 1);
 
         }
             Animator.SetInteger("AnimState", 0);
- 
 
+        
     }
 
     void OnCollisionStay2D(Collision2D col)
