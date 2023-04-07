@@ -7,17 +7,25 @@ public class CharacerController : MonoBehaviour
     public Rigidbody2D Rigidbody2D;
     public  float Speed;
     public float JumpForce;
-    public float JumpSpeedLimit;
     private bool isGrounded;
     public Animator Animator;
     public GameObject Player1;
     public GameObject Player2;
     private bool AnimationIsRunning = false;
+    public GameObject HurtBoxOverHead;
+    public GameObject HurtBoxMedium;
+    public GameObject HurtBoxLow;
+    public bool Blocking  ;
+    public int Health;
+    private bool OnRight ;
+
     // Start is called before the first frame update
     void Start()
     {
         Rigidbody2D = GetComponent<Rigidbody2D>();
         Animator = GetComponent<Animator>();
+        Blocking = false;
+        OnRight = false;
     }
 
     // Update is called once per frame
@@ -37,29 +45,43 @@ public class CharacerController : MonoBehaviour
         //Block Logic
         if (Player1.transform.position.x - Player2.transform.position.x < 0)
         {
+            if (OnRight == true)
+            {
+                this.transform.rotation = Quaternion.Euler(0, 180f, 0);
+                OnRight = false;
+            }
             if (Input.GetAxis("Horizontal") == -1)
             {
                 Animator.SetBool("Block", true);
+                Blocking = true;
             }else{
                 Animator.SetBool("Block", false);
                 Animator.SetBool("StopBlock", true);
+                Blocking = false;
             }
 
         }else{
+            if(OnRight == false)
+            {
+                this.transform.rotation = Quaternion.Euler(0, 180f, 0);
+                OnRight = true;
+            }
             if (Input.GetAxis("Horizontal") == 1)
             {
                 Animator.SetBool("Block", true);
+                Blocking = true;
             }
             else
             {
                 Animator.SetBool("Block", false);
                 Animator.SetBool("StopBlock", true);
+                Blocking = false;
             }
 
         }
-
         //Animations Start Here
-       /* Animation anim = Animator.GetCurrentAnimatorClipInfo(0)[0].clip;
+      
+        /* Animation anim = Animator.GetCurrentAnimatorClipInfo(0)[0].clip;
         if (!anim.IsPlaying("Attack1") || !anim.IsPlaying("Attack2") || !anim.IsPlaying("Attack2"))
         {
             AnimationIsRunning = false;
@@ -68,16 +90,18 @@ public class CharacerController : MonoBehaviour
         {
             Animator.SetBool("Attack1", true);
             //AnimationIsRunning = true;
-        
+            HurtBoxLogic(1);
         }
         if (Input.GetButtonDown("Fire2") == true)
         {
             Animator.SetBool("Attack2", true);
+            HurtBoxLogic(2);
 
         }
         if (Input.GetButtonDown("Fire3") == true)
         {
             Animator.SetBool("Attack3", true);
+            HurtBoxLogic(3);
 
         }
         if (Input.GetButtonDown("Horizontal") == true && isGrounded == true)
@@ -91,6 +115,46 @@ public class CharacerController : MonoBehaviour
         
     }
 
+    IEnumerator WaitAndStartHurtBox(GameObject HurtBox) 
+    {
+        yield return new WaitForSeconds(.2f);
+        HurtBoxStart(HurtBox);
+        yield return new WaitForSeconds(.4f);
+        HurtBoxStop(HurtBox);
+    }
+
+    void HurtBoxLogic(int attackIndex) 
+    {
+        if (attackIndex == 1 || attackIndex == 3)
+        {
+            StartCoroutine(WaitAndStartHurtBox(HurtBoxOverHead));
+            StartCoroutine(WaitAndStartHurtBox(HurtBoxMedium));
+            StartCoroutine(WaitAndStartHurtBox(HurtBoxLow));
+        }
+        else if (attackIndex == 2) 
+        {
+            StartCoroutine(WaitAndStartHurtBox(HurtBoxMedium));
+        }
+    }
+    void HurtBoxStart(GameObject HurtBox) 
+    {
+        HurtBox.SetActive(true);
+    }
+    void HurtBoxStop(GameObject HurtBox) 
+    {
+        HurtBox.SetActive(false);
+    }
+    public void BlockAttack(int Damage)
+    {
+        Health -= Damage / 10;
+    }
+    public void AttackHit(int Damage) 
+    {
+        Health -= Damage;
+        Player2.GetComponent<Rigidbody2D>().AddForce(new Vector2(3, 10));    
+    
+    }
+   
     void OnCollisionStay2D(Collision2D col)
     {
         if (col.gameObject.tag == "Ground")
